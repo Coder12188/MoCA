@@ -1,8 +1,10 @@
 # MoCA: Implicit Social Context Analysis
 
-MoCA is a lightweight reference implementation for analyzing implicit social meaning from multimodal inputs. A case is represented as a structured tuple containing a scenario, explicit evidence, a candidate subject, a target, a social mechanism, and a latent social label.
+MoCA is a multimodal benchmark and reference implementation for structured implicit social cognition reasoning. Given textual and audiovisual evidence, the task recovers **who** expresses **what** toward **whom**, together with the social mechanism through which the latent meaning is conveyed. MoCA covers three complementary scenarios: affection, intent, and stance.
 
-The repository exposes the reasoning contracts, prompt templates, data schemas, sample cases, and a command-line runner.
+This repository provides the benchmark annotations, reasoning contracts, prompt templates, data schemas, and representative multimodal cases. The corresponding media files are hosted in the [MoCA Hugging Face dataset](https://huggingface.co/datasets/z4722/Implicit_dataset).
+
+**Resources:** [Benchmark annotations](data/datasetv3.18_hf_319_no_media_options.json) · [Hugging Face media](https://huggingface.co/datasets/z4722/Implicit_dataset) · [Pinned media snapshot](https://huggingface.co/datasets/z4722/Implicit_dataset/tree/170a5941118de47ec22bf5b7d5253cda25838c43)
 
 ## Overview
 
@@ -27,10 +29,75 @@ flowchart LR
 
 The prompt contracts for these stages are defined in [`src/prompts.py`](src/prompts.py), and the pipeline orchestration is in [`src/pipeline.py`](src/pipeline.py).
 
+## Benchmark data
+
+The released annotation file, [`data/datasetv3.18_hf_319_no_media_options.json`](data/datasetv3.18_hf_319_no_media_options.json), contains **3,108** real-world multimodal instances. It is a lightweight annotation release: media locations and candidate-option sets are intentionally omitted from the JSON, while the corresponding image, video, and audio files are distributed through Hugging Face.
+
+### Dataset composition
+
+| Scenario | Image cases | Video cases | Total |
+|---|---:|---:|---:|
+| Affection | 650 | 286 | 936 |
+| Intent | 900 | 279 | 1,179 |
+| Stance (`attitude` in the released JSON) | 680 | 313 | 993 |
+| **Total** | **2,230** | **878** | **3,108** |
+
+The `attitude` scenario key in the annotation file corresponds to the **stance** scenario used in the paper and reasoning code. Map `attitude` to `stance` when passing released records to the pipeline.
+
+### Annotation structure
+
+Each record contains the input text, a four-component structured annotation, and diversity metadata:
+
+```json
+{
+  "id": "affection_0001",
+  "input": {
+    "scenario": "affection",
+    "text": "Example multimodal utterance"
+  },
+  "ground_truth": {
+    "subject": "speaker",
+    "target": "partner",
+    "mechanism": "figurative semantics",
+    "label": "disgusted"
+  },
+  "diversity": {
+    "domain": "Online & Social Media",
+    "culture": "General Culture"
+  }
+}
+```
+
+| Field | Description |
+|---|---|
+| `id` | Stable instance identifier used to associate annotations with media files. |
+| `input.scenario` | Implicit social domain: `affection`, `intent`, or `attitude` (stance). |
+| `input.text` | Textual component paired with the visual or audiovisual evidence. |
+| `ground_truth.subject` | Social actor whose implicit state is being inferred. |
+| `ground_truth.target` | Person, group, object, issue, or event toward which the state is directed. |
+| `ground_truth.mechanism` | Expressive or socio-cognitive strategy that realizes the implicit meaning. |
+| `ground_truth.label` | Scenario-specific latent social state. |
+| `diversity.domain` | Social setting in which the interaction occurs. |
+| `diversity.culture` | Cultural context associated with the instance. |
+
+### Media access
+
+The canonical media release is available at [`z4722/Implicit_dataset`](https://huggingface.co/datasets/z4722/Implicit_dataset). Files are organized by scenario and share the same identifier as the annotation record:
+
+```text
+<scenario>/image/<id>.png or <id>.jpg
+<scenario>/video/<id>.mp4
+<scenario>/Video_composition/audio_caption/<id>.mp3
+```
+
+The current media release contains 2,230 static images, 878 videos, and 878 associated audio files. Extracted-frame directories are not included. Because the lightweight JSON does not contain a media-type field, an instance can be paired by checking whether its `id` is present under the scenario's `image/` or `video/` directory.
+
 ## Repository structure
 
 ```text
 MoCA/
+├── data/                # Full lightweight benchmark annotations
+│   └── datasetv3.18_hf_319_no_media_options.json
 ├── src/
 │   ├── agents.py       # Agent specifications
 │   ├── cli.py          # Command-line entry point
@@ -47,9 +114,9 @@ MoCA/
     └── stance/         # Image and video/audio examples
 ```
 
-## Input format
+## Pipeline case format
 
-The input file may contain a single JSON object or a JSON list. Each case follows this structure:
+The reasoning pipeline accepts either a single JSON object or a JSON list. Unlike the lightweight benchmark annotations above, executable pipeline cases may include local media references and candidate subject/target options, as illustrated in [`samples/samples.json`](samples/samples.json):
 
 ```json
 {
