@@ -1,2 +1,15 @@
 __pycache__/
 *.py[cod]
+
+# Packaging / build artifacts
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+
+# Editor/OS
+.DS_Store

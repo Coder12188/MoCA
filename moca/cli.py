@@ -11,7 +11,9 @@ from .schemas import FinalReasoningResult, ReasoningCase
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Appendix 5-step conflict reasoner")
+    parser = argparse.ArgumentParser(
+        description="MoCA / CoDAR five-stage conflict-driven abductive reasoning pipeline"
+    )
     parser.add_argument("--input-file", type=Path, required=True)
     parser.add_argument("--output-file", type=Path)
     parser.add_argument("--max-revision-rounds", type=int, default=0)

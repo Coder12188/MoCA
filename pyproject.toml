@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moca"
+version = "0.1.0"
+description = "MoCA: benchmark and reference reasoning pipeline for Implicit Social Context Analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = [
+    "multimodal-learning",
+    "affective-computing",
+    "social-computing",
+    "cognitive-reasoning",
+    "vision-language",
+]
+authors = [{ name = "MoCA Authors" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+# The reasoning pipeline and schemas are pure standard library.
+# The optional web-search tool only needs a TAVILY_API_KEY at runtime,
+# it does not add a hard dependency.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Coder12188/MoCA"
+Dataset = "https://huggingface.co/datasets/z4722/Implicit_dataset"
+
+[project.scripts]
+moca = "moca.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["moca*"]
