@@ -9,6 +9,8 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](pyproject.toml)
 [![Hugging Face Dataset](https://img.shields.io/badge/🤗%20Dataset-Implicit__dataset-yellow.svg)](https://huggingface.co/datasets/z4722/Implicit_dataset)
 
+<img src="assets/image/moca-teaser.png" alt="MoCA task overview across the affection, intent, and stance scenarios" width="100%">
+
 </div>
 
 MoCA (**I**mplicit **So**cial **C**ontext **A**nalysis) is a task, benchmark, and reference reasoning framework for a question that explicit-cue models routinely miss: given a piece of multimodal evidence, **who** expresses **what** toward **whom**, and **through which social mechanism** is that latent meaning conveyed? MoCA covers three complementary scenarios — **affection**, **intent**, and **stance** — and pairs 3,108 real-world multimodal instances with fine-grained cognitive annotations.
@@ -33,6 +35,13 @@ This repository hosts the benchmark annotations, the CoDAR prompt contracts and 
 
 CoDAR organizes implicit social reasoning into five stages:
 
+<p align="center">
+  <img src="assets/image/codar-pipeline.png" alt="Overview of the CoDAR five-stage conflict-driven abductive reasoning pipeline" width="720">
+</p>
+
+<details>
+<summary>Compact stage graph</summary>
+
 ```mermaid
 flowchart LR
     A[Text and media case] --> B[Stage 1: Explicit perception]
@@ -43,6 +52,8 @@ flowchart LR
     F --> G[Prediction and acceptance status]
     F -. rejected .-> C
 ```
+
+</details>
 
 1. **Explicit perception** records text and optional speech captions without assigning social meaning.
 2. **Social context** formulates retrieval questions and organizes evidence into `fact`, `connection`, and `social_norm` fields.
@@ -206,6 +217,8 @@ The schema accepts the following scenario values:
 
 ```text
 MoCA/
+├── assets/
+│   └── image/             # README figures (teaser, CoDAR pipeline diagram)
 ├── moca/                 # CoDAR reasoning package (pip installable)
 │   ├── agents.py         # Agent specifications
 │   ├── cli.py            # Command-line entry point
